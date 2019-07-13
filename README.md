@@ -1,5 +1,7 @@
 # lets_go
 
+This project is inspired by https://github.com/Yixiaohan/show-me-the-code
+
 ## 0 Hello World
 
 Print "Hello World" on the screen.
