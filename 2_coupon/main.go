@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	// We do not use 1 I 0 o
 	charset := []string{
 		"A",
 		"B",
@@ -46,7 +47,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	count := 0
 
-	coupons := make(map[string]bool)
+	coupons := make(map[string]bool) // use this to check duplicated coupons
 
 	for count < 200 {
 		var buffer bytes.Buffer
