@@ -11,7 +11,7 @@ Print "Hello World" on the screen.
 Add a number to your Avatar
 
 Like this:
-![avatar](https://raw.githubusercontent.com/yuliji/lets_go/master/1_avatar_number/out.png)
+![avatar](https://raw.githubusercontent.com/yuliji/lets_go/master/avatar_number/out.png)
 
 
 ## coupon
