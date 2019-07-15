@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -50,7 +50,7 @@ func main() {
 	coupons := make(map[string]bool) // use this to check duplicated coupons
 
 	for count < 200 {
-		var buffer bytes.Buffer
+		var buffer strings.Builder
 
 		for i := 0; i < 16; i++ {
 			buffer.WriteString(charset[rand.Intn(len(charset))])
