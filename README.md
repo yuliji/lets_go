@@ -14,6 +14,6 @@ Like this:
 ![avatar](https://raw.githubusercontent.com/yuliji/lets_go/master/1_avatar_number/out.png)
 
 
-## coupons
+## coupon
 
 Generate 200 coupon code such as: ZGPE-TMLR-SYD6-04E7
