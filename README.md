@@ -17,3 +17,7 @@ Like this:
 ## coupon
 
 Generate 200 coupon code such as: ZGPE-TMLR-SYD6-04E7
+
+## coupon_mysql
+
+Save your generated coupons into a mysql db
