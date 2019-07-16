@@ -1,10 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"math/rand"
 	"strings"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func generate_coupon() string {
@@ -64,4 +67,66 @@ func main() {
 		fmt.Println(coupon)
 	}
 
+	db, err := sql.Open("mysql", "root:my-secret-pw@tcp(127.0.0.1:3306)/mysql")
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	hasDb := false
+	databases := showDatabases(db)
+	for _, database := range databases {
+		if database == "coupons" {
+			hasDb = true
+		}
+	}
+
+	if !hasDb {
+		createDatabase(db)
+		fmt.Println("created db")
+	} else {
+		fmt.Println("db already exists")
+	}
+
+}
+
+func createDatabase(db *sql.DB) {
+	stmt, err := db.Prepare("CREATE DATABASE coupons")
+	if err != nil {
+		panic(err)
+	}
+	_, err2 := stmt.Exec()
+	if err2 != nil {
+		panic(err)
+	}
+}
+
+func showDatabases(db *sql.DB) []string {
+	dataBases := make([]string, 10)
+
+	var database string
+	rows, err := db.Query("SHOW DATABASES")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&database)
+		if err != nil {
+			panic(err.Error())
+		}
+		dataBases = append(dataBases, database)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err.Error())
+	}
+	return dataBases
 }
