@@ -62,12 +62,7 @@ func generate_coupon() string {
 }
 
 func main() {
-	for i := 0; i < 200; i++ {
-		coupon := generate_coupon()
-		fmt.Println(coupon)
-	}
-
-	db, err := sql.Open("mysql", "root:my-secret-pw@tcp(127.0.0.1:3306)/mysql")
+	db, err := sql.Open("mysql", "root:my-secret-pw@tcp(127.0.0.1:3306)/coupons")
 	if err != nil {
 		panic(err)
 	}
@@ -76,57 +71,30 @@ func main() {
 
 	err = db.Ping()
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err)
 	}
-
-	hasDb := false
-	databases := showDatabases(db)
-	for _, database := range databases {
-		if database == "coupons" {
-			hasDb = true
-		}
-	}
-
-	if !hasDb {
-		createDatabase(db)
-		fmt.Println("created db")
-	} else {
-		fmt.Println("db already exists")
-	}
-
-}
-
-func createDatabase(db *sql.DB) {
-	stmt, err := db.Prepare("CREATE DATABASE coupons")
+	stmt, err := db.Prepare("INSERT INTO coupons(coupon) VALUES(?)")
 	if err != nil {
 		panic(err)
 	}
-	_, err2 := stmt.Exec()
-	if err2 != nil {
-		panic(err)
-	}
-}
 
-func showDatabases(db *sql.DB) []string {
-	dataBases := make([]string, 10)
+	for i := 0; i < 200; i++ {
+		coupon := generate_coupon()
+		fmt.Println(coupon)
 
-	var database string
-	rows, err := db.Query("SHOW DATABASES")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		err := rows.Scan(&database)
+		res, err := stmt.Exec(coupon)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
-		dataBases = append(dataBases, database)
+		lastId, err := res.LastInsertId()
+		if err != nil {
+			panic(err)
+		}
+		rowCnt, err := res.RowsAffected()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("ID = %d, affected = %d\n", lastId, rowCnt)
 	}
-	err = rows.Err()
-	if err != nil {
-		panic(err.Error())
-	}
-	return dataBases
+
 }
