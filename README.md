@@ -25,3 +25,7 @@ Save your generated coupons into a mysql db
 ## coupon_orm
 
 Do **coupons_mysql** by using an ORM
+
+## coupon_redis
+
+Store coupons in Redis
