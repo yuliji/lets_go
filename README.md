@@ -24,4 +24,4 @@ Save your generated coupons into a mysql db
 
 ## coupon_orm
 
-Do *coupons_mysql* by using an ORM
+Do **coupons_mysql** by using an ORM
