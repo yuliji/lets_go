@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 
@@ -62,7 +63,11 @@ func generate_coupon() string {
 }
 
 func main() {
-	db, err := sql.Open("mysql", "root:my-secret-pw@tcp(127.0.0.1:3306)/coupons")
+	db_username := os.Getenv("DB_USERNAME")
+	db_passwd := os.Getenv("DB_PASSWORD")
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/coupons", db_username, db_passwd)
+
+	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		panic(err)
 	}
