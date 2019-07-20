@@ -1,13 +1,12 @@
-package main
+package coupon
 
 import (
 	"crypto/rand"
-	"fmt"
 	"math/big"
 	"strings"
 )
 
-func generate_coupon() string {
+func GenerateCoupon() string {
 	// We do not use 1 I 0 o
 	charset := []string{
 		"A",
@@ -63,12 +62,4 @@ func generate_coupon() string {
 	}
 	coupon := buffer.String()
 	return coupon
-}
-
-func main() {
-	for i := 0; i < 200; i++ {
-		coupon := generate_coupon()
-		fmt.Println(coupon)
-	}
-
 }
