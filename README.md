@@ -32,7 +32,7 @@ Store coupons in Redis
 
 ## word_count
 
-You have many txt files with English articles. Generate a list of word count in csv format such as:
+You have a txt file with English articles. Generate a list of word count in csv format such as:
 ```csv
 hello,666
 world,888
