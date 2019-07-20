@@ -1,13 +1,13 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
-	"math/rand"
+	"math/big"
 	"strings"
-	"time"
 )
 
-func main() {
+func generate_coupon() string {
 	// We do not use 1 I 0 o
 	charset := []string{
 		"A",
@@ -44,27 +44,31 @@ func main() {
 		"9",
 	}
 
-	rand.Seed(time.Now().UnixNano())
-	count := 0
+	var buffer strings.Builder
 
-	coupons := make(map[string]bool) // use this to check duplicated coupons
+	charset_len := len(charset)
+	var max big.Int
+	max.SetInt64(int64(charset_len))
 
-	for count < 200 {
-		var buffer strings.Builder
-
-		for i := 0; i < 16; i++ {
-			buffer.WriteString(charset[rand.Intn(len(charset))])
-			if i == 3 || i == 7 || i == 11 {
-				buffer.WriteString("-")
-			}
+	for i := 0; i < 16; i++ {
+		randInt, err := rand.Int(rand.Reader, &max)
+		if err != nil {
+			panic(err)
 		}
-		coupon := buffer.String()
-		_, present := coupons[coupon]
-		if !present {
-			fmt.Println(coupon)
-			coupons[coupon] = true
-			count++
+		idx := int(randInt.Int64())
+		buffer.WriteString(charset[idx])
+		if i == 3 || i == 7 || i == 11 {
+			buffer.WriteString("-")
 		}
+	}
+	coupon := buffer.String()
+	return coupon
+}
+
+func main() {
+	for i := 0; i < 200; i++ {
+		coupon := generate_coupon()
+		fmt.Println(coupon)
 	}
 
 }
