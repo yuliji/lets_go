@@ -13,6 +13,9 @@ Add a number to your Avatar
 Like this:
 ![avatar](https://raw.githubusercontent.com/yuliji/lets_go/master/avatar_number/out.png)
 
+## imageinfo
+
+Write a cli tool to get basic info of an image
 
 ## coupon
 
@@ -37,3 +40,6 @@ You have a txt file with English articles. Generate a list of word count in csv 
 hello,666
 world,888
 ```
+## gr_word_count
+
+You have many test files. Generate the same word count file as **word_count** . Use goroutine to do it.
