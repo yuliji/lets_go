@@ -6,6 +6,7 @@ import (
 	"log"
 	"path"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 )
@@ -42,20 +43,29 @@ func main() {
 
 	words := make(map[string]int)
 
-	// numCpu := runtime.NumCPU()
+	numCpu := runtime.NumCPU()
 
-	c := make(chan map[string]int)
+	outc := make(chan map[string]int, len(files))
 
-	numFiles := 0
-	for _, file := range files {
-		filePath := path.Join("./articles", file.Name())
-		go countWord(filePath, c)
-		numFiles++
+	inqueues := make([]chan string, numCpu)
 
+	for i := 0; i < numCpu; i++ {
+		inqueue := make(chan string, len(files))
+		inqueues[i] = inqueue
+		go countWord(inqueue, outc)
 	}
 
-	for i := 0; i < numFiles; i++ {
-		articleWords := <-c
+	for idx, file := range files {
+		filePath := path.Join("./articles", file.Name())
+		inqueues[idx%numCpu] <- filePath
+	}
+
+	for i := 0; i < numCpu; i++ {
+		close(inqueues[i])
+	}
+
+	for i := 0; i < len(files); i++ {
+		articleWords := <-outc
 		for w, c := range articleWords {
 			_, ok := words[w]
 			if ok {
@@ -78,45 +88,49 @@ func main() {
 	}
 }
 
-func countWord(filePath string, c chan map[string]int) {
-	data, err := ioutil.ReadFile(filePath)
-	check(err)
-	filecontent := string(data)
-	lines := strings.Split(filecontent, "\n")
+func countWord(inc chan string, outc chan map[string]int) {
+	// fmt.Println("start countWord")
 
-	r := regexp.MustCompile(`\[\d+\]`)
-	punctuations := regexp.MustCompile(`[\(\)';\":/.,<>\?&\[\]\{\}%\-—#\$\+!–––]`)
+	for filePath := range inc {
+		// fmt.Printf("work on %s\n", filePath)
+		data, err := ioutil.ReadFile(filePath)
+		check(err)
+		filecontent := string(data)
+		lines := strings.Split(filecontent, "\n")
 
-	var wordcount map[string]int
-	wordcount = make(map[string]int)
+		r := regexp.MustCompile(`\[\d+\]`)
+		punctuations := regexp.MustCompile(`[\(\)';\":/.,<>\?&\[\]\{\}%\-—#\$\+!–––]`)
 
-	for _, line := range lines {
-		line = strings.Trim(line, " \n\t\r")
-		line = r.ReplaceAllString(line, " ")
-		line = punctuations.ReplaceAllString(line, " ")
-		if line == "" {
-			continue
-		}
-		line = strings.ToLower(line)
-		words := strings.Split(line, " ")
-		for _, word := range words {
-			word = strings.TrimSpace(word)
-			if word == "" {
+		var wordcount map[string]int
+		wordcount = make(map[string]int)
+
+		for _, line := range lines {
+			line = strings.Trim(line, " \n\t\r")
+			line = r.ReplaceAllString(line, " ")
+			line = punctuations.ReplaceAllString(line, " ")
+			if line == "" {
 				continue
 			}
-			if !IsLetter(word) || IsDigit(word) {
-				continue
-			}
-			cnt, ok := wordcount[word]
-			if ok {
-				wordcount[word] = cnt + 1
-			} else {
-				wordcount[word] = 1
+			line = strings.ToLower(line)
+			words := strings.Split(line, " ")
+			for _, word := range words {
+				word = strings.TrimSpace(word)
+				if word == "" {
+					continue
+				}
+				if !IsLetter(word) || IsDigit(word) {
+					continue
+				}
+				cnt, ok := wordcount[word]
+				if ok {
+					wordcount[word] = cnt + 1
+				} else {
+					wordcount[word] = 1
+				}
 			}
 		}
+		outc <- wordcount
 	}
-
-	c <- wordcount
 }
 
 type Pair struct {
