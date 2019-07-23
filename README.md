@@ -17,6 +17,10 @@ Like this:
 
 Write a cli tool to get basic info of an image
 
+## imageresize
+
+Write a cli to resize image
+
 ## coupon
 
 Generate 200 coupon code such as: ZGPE-TMLR-SYD6-04E7
