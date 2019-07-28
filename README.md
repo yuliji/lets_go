@@ -47,3 +47,11 @@ world,888
 ## gr_word_count
 
 You have many test files. Generate the same word count file as **word_count** . Use goroutine to do it.
+
+## telebotrect
+
+Telegram bot to print the user and chat id
+
+## telebotsend
+
+Send a message to a user
